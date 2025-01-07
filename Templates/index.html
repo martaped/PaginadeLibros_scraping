@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Books</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .book {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin: 10px;
+            display: inline-block;
+            width: 200px;
+            text-align: center;
+        }
+        .book img {
+            width: 100px;
+            height: 150px;
+            object-fit: cover;
+        }
+        .book h3 {
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        .book p {
+            font-size: 14px;
+            color: #555;
+        }
+        form {
+            margin-top: 20px;
+        }
+        .order-button {
+            position: fixed;
+            top: 20px; /* Distancia desde la parte superior */
+            right: 20px; /* Distancia desde la parte derecha */
+            background-color: #007bff; /* Color de fondo */
+            color: white; /* Color del texto */
+            border: none; /* Sin bordes */
+            padding: 10px 20px; /* Espaciado interno */
+            font-size: 16px; /* Tamaño de la fuente */
+            border-radius: 5px; /* Bordes redondeados */
+            cursor: pointer; /* Cambiar cursor al pasar */
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Sombra */
+        }
+        .order-button:hover {
+            background-color: #0056b3; /* Color de fondo al pasar el mouse */
+        }
+   
+            /* Ocultar el checkbox original */
+            input[type="checkbox"] {
+                appearance: none; /* Eliminar el estilo predeterminado */
+                -webkit-appearance: none; /* Compatibilidad con navegadores antiguos */
+                margin: 0; /* Sin márgenes predeterminados */
+            }
+        
+            /* Estilo del checkbox personalizado */
+            input[type="checkbox"]::before {
+                content: ""; /* Pseudoelemento para el diseño del checkbox */
+                display: inline-block;
+                width: 20px; /* Ancho del checkbox */
+                height: 20px; /* Alto del checkbox */
+                border: 2px solid #007bff; /* Color del borde */
+                border-radius: 4px; /* Bordes redondeados */
+                background-color: white; /* Fondo inicial */
+                cursor: pointer; /* Cambiar cursor al pasar */
+            }
+        
+            /* Estilo cuando está marcado */
+            input[type="checkbox"]:checked::before {
+                background-color: #007bff; /* Fondo azul cuando está marcado */
+                border-color: #0056b3; /* Borde más oscuro */
+                content: "✔"; /* Símbolo dentro del checkbox */
+                color: white; /* Color del símbolo */
+                font-size: 16px; /* Tamaño del símbolo */
+                text-align: center;
+                line-height: 20px; /* Centrado vertical */
+            }
+        
+            /* Espaciado entre checkbox y texto */
+            input[type="checkbox"] + label {
+                margin-left: 8px;
+            }
+        
+        
+    </style>
+    
+    
+    <script>
+        // Función para traducir texto usando la API gratuita de Google Translate
+        async function translateText(text, targetLang = 'es') {
+            const response = await fetch(`https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${targetLang}&dt=t&q=${encodeURIComponent(text)}`);
+            const data = await response.json();
+            return data[0][0][0];
+        }
+
+        // Traducir los títulos dinámicamente al cargar la página
+        async function translateTitles() {
+            const titles = document.querySelectorAll('.book-title');
+            for (const title of titles) {
+                const originalText = title.textContent;
+                const translatedText = await translateText(originalText);
+                title.textContent = translatedText;  // Reemplazar con la traducción
+            }
+        }
+
+        // Ejecutar la traducción al cargar la página
+        window.onload = translateTitles;
+    </script>
+</head>
+<body>
+    <h1>Catalogo de libros</h1>
+    
+    <form method="POST" action="/process_order">
+        <button type="submit" class="order-button">Generar Orden de compra</button>
+        <div>
+            {% for book in books %}
+            
+            <div class="book">
+                <input type="checkbox" id="book-{{ loop.index }}" name="selected_books" value="{{ book.title }}">
+                <label for="book-{{ loop.index }}"></label>
+                <img src="{{ book.image }}" alt="{{ book.title }}">
+                <h3 class="book-title">{{ book.title }}</h3>
+                <p>Precio: {{ book.price }}</p>
+                <p>{{ book.availability }}</p>
+            </div>
+            
+            {% endfor %}
+        </div>
+        
+        
+    </form>
+</body>
+</html>
