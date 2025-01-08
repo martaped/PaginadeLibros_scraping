@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Order Summary</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .order-summary {
+            border: 1px solid #ddd;
+            padding: 20px;
+            background-color: #f9f9f9;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Orden de Compra</h1>
+    <div class="order-summary">
+        <h2>Libros Seleccionados:</h2>
+        <ul>
+            {% for book in selected_books %}
+            <li>{{ book.title }} - ${{ "%.2f"|format(book.price) }}</li>
+            {% endfor %}
+        </ul>
+        <p class="total">Total: ${{ "%.2f"|format(total_price) }}</p>
+        
+    </div>
+    <a href="/">Vuelve al catálogo</a>
+</body>
+</html>
